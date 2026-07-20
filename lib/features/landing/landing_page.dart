@@ -1,6 +1,5 @@
 import 'package:crewmanpower/core/helpers/web_footer.dart';
 import 'package:crewmanpower/core/service/theems/theme_provider.dart';
-import 'package:crewmanpower/core/widgets/animated_stat_card.dart';
 import 'package:crewmanpower/core/widgets/build_image_icon.dart';
 import 'package:crewmanpower/core/widgets/custom_nav_button.dart';
 import 'package:crewmanpower/core/widgets/custom_drawer_card.dart';
@@ -10,6 +9,7 @@ import 'package:crewmanpower/features/career/career_view.dart';
 import 'package:crewmanpower/features/contact/contact_view.dart';
 import 'package:crewmanpower/features/industry/industry_view.dart';
 import 'package:crewmanpower/core/localization/app_localizations.dart';
+import 'package:crewmanpower/features/landing/horizontal_ticker_marquee.dart';
 import 'package:crewmanpower/features/landing/web_footer_widget.dart';
 import 'package:crewmanpower/features/marketing/marketing_view.dart';
 import 'package:crewmanpower/features/services/service_view.dart';
@@ -34,10 +34,7 @@ class _WebLandingPageState extends State<WebLandingPage> {
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    
-    // Explicitly casting the sub-namespaces to the custom base type fixes all errors
     final BaseThemeColors activeThemeColors = isDark ? AppColors.dark : AppColors.light;
-
     Widget wrapWithFooter(Widget screenView) {
       double dynamicFooterHeight = screenWidth > 900 ? 480 : 950;
       double screenHeight = MediaQuery.of(context).size.height;
@@ -69,7 +66,6 @@ class _WebLandingPageState extends State<WebLandingPage> {
     ];
 
     return Scaffold(
-      //backgroundColor: Image.asset('assets/images/bg_logo.png').color,
       backgroundColor: activeThemeColors.background,
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(80),
@@ -258,6 +254,7 @@ class _WebLandingPageState extends State<WebLandingPage> {
           mockupIcon: Icons.hub_outlined,
           imageUrl: "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?q=80&w=600",
         ),
+        _buildStatisticsSection(context,isDesktop),
         SplitFeatureSection(
           isDesktop: isDesktop,
           imageRight: false,
@@ -276,20 +273,26 @@ class _WebLandingPageState extends State<WebLandingPage> {
           mockupIcon: Icons.connect_without_contact_sharp,
           imageUrl: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=600",
         ),
-        _buildStatisticsSection(isDesktop),
+        
         _buildTestimonialsSection(isDesktop, isDark),
       ],
     );
   }
 
-  Widget _buildStatisticsSection(bool isDesktop) {
+  Widget _buildStatisticsSection(BuildContext context, bool isDark) {
+    final BaseThemeColors activeThemeColors = isDark ? AppColors.dark : AppColors.light;
+
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 70, horizontal: 24),
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [AppColors.primaryBlue, Color(0xFF0A2540)],
+          // Consuming the specific theme gradient colors
+          colors: [
+            activeThemeColors.gradientStart,
+            activeThemeColors.gradientEnd,
+          ],
         ),
       ),
       width: double.infinity,
@@ -297,10 +300,21 @@ class _WebLandingPageState extends State<WebLandingPage> {
         alignment: WrapAlignment.center,
         spacing: 24,
         runSpacing: 24,
-        children: const [
-          AnimatedStatCard(targetValue: 500, suffix: "+", label: "Active Enterprise Clients", icon: Icons.business_center_rounded),
-          AnimatedStatCard(targetValue: 10000, suffix: "+", label: "Verified Placed Candidates", icon: Icons.people_alt_rounded),
-          AnimatedStatCard(targetValue: 99, suffix: "%", label: "Client Retention Success Rate", icon: Icons.verified_user_rounded),
+        children: [
+          HorizontalTickerMarquee(
+            onItemTap: (index) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(
+                    'You clicked verified badge code: $index',
+                    style: const TextStyle(color: Colors.white), // Forced white for visibility on blue background
+                  ),
+                  backgroundColor: AppColors.navyBackground, // Navy SnackBar matches standard look better
+                  duration: const Duration(seconds: 2),
+                ),
+              );
+            },
+          ),
         ],
       ),
     );

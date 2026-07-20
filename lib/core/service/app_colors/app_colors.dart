@@ -8,6 +8,9 @@ abstract class BaseThemeColors {
   Color get textSecondary;
   Color get accentContainer;
   Color get border;
+  // NEW: Add getters for standard gradient colors
+  Color get gradientStart;
+  Color get gradientEnd;
 }
 
 class AppColors {
@@ -33,6 +36,12 @@ class _Light implements BaseThemeColors {
   final Color accentContainer = const Color(0xFFF1F5F9);
   @override
   final Color border = const Color(0xFFE2E8F0);
+
+  // NEW: Implementation for Light Mode (Based on WhatsApp Image 2026-07-20 at 12.04.01 PM_3.jpg)
+  @override
+  Color get gradientStart => const Color(0xFF42A5F5); // Lighter blue top-left
+  @override
+  Color get gradientEnd => const Color(0xFF0D47A1);   // Primary blue bottom-right
 }
 
 class _Dark implements BaseThemeColors {
@@ -50,4 +59,10 @@ class _Dark implements BaseThemeColors {
   final Color accentContainer = const Color(0xFF334155);
   @override
   final Color border = const Color(0xFF475569);
+
+  // NEW: Implementation for Dark Mode (Based on image_2eda9e.jpg)
+  @override
+  Color get gradientStart => const Color(0xFF0F172A); // Dark charcoal top-left
+  @override
+  Color get gradientEnd => const Color(0xFF1E293B);   // Slightly lighter navy bottom-right
 }

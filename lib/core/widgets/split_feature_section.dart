@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:crewmanpower/core/service/app_colors/app_colors.dart';
 
 class SplitFeatureSection extends StatelessWidget {
   final bool isDesktop;
@@ -22,44 +23,35 @@ class SplitFeatureSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Read brightness mode and color definitions directly from the system theme context
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
-    
-    // Fall back gracefully if primaryColor is close to custom background colors
-    final themeColor = theme.primaryColor;
+    final BaseThemeColors activeColors = isDark ? AppColors.dark : AppColors.light;
 
-    // Adaptive backgrounds based on theme brightness and row order
-    final sectionBgColor = isDark 
-        ? (imageRight ? theme.scaffoldBackgroundColor : theme.cardColor)
-        : (imageRight ? Colors.white : const Color(0xFFF8FAFC));
+    // Use AppColors: Black in light mode, White in dark mode
+    final titleTextColor = activeColors.textPrimary;
+    final descTextColor = activeColors.textSecondary;
+    final cardBgColor = activeColors.surface.withOpacity(isDark ? 0.85 : 0.95);
 
-    final cardBgColor = isDark ? theme.cardColor : Colors.white;
-    final fallbackBgColor = isDark ? Colors.grey[900]! : const Color(0xFFF1F5F9);
-
-    // Text Style definitions mapping theme schemes dynamically
-    final titleTextColor = isDark ? Colors.white : const Color(0xFF0F172A);
-    final descTextColor = isDark ? Colors.white70 : Colors.black54;
-    final blueprintSubText = isDark ? Colors.white38 : Colors.black38;
-
-    // Dynamic text content block layout
     Widget textBlock = Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisAlignment: MainAxisAlignment.center,
-      mainAxisSize: MainAxisSize.min, 
+      mainAxisSize: MainAxisSize.min,
       children: [
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
           decoration: BoxDecoration(
-            color: themeColor.withOpacity(0.08),
+            color: AppColors.primaryBlue.withOpacity(0.12),
             borderRadius: BorderRadius.circular(6),
+            border: Border.all(
+              color: AppColors.primaryBlue.withOpacity(0.3),
+            ),
           ),
           child: Text(
             badgeText,
-            style: TextStyle(
-              color: themeColor, 
-              fontSize: 15, 
-              fontWeight: FontWeight.bold, 
+            style: const TextStyle(
+              color: AppColors.primaryBlue,
+              fontSize: 13,
+              fontWeight: FontWeight.bold,
               letterSpacing: 1,
             ),
           ),
@@ -68,9 +60,9 @@ class SplitFeatureSection extends StatelessWidget {
         Text(
           title,
           style: TextStyle(
-            fontSize: isDesktop ? 30 : 20, 
-            fontWeight: FontWeight.bold, 
-            color: titleTextColor, 
+            fontSize: isDesktop ? 30 : 20,
+            fontWeight: FontWeight.bold,
+            color: titleTextColor,
             height: 1.2,
           ),
         ),
@@ -78,44 +70,43 @@ class SplitFeatureSection extends StatelessWidget {
         Text(
           description,
           style: TextStyle(
-            fontSize: 15, 
-            color: descTextColor, 
+            fontSize: 15,
+            color: descTextColor,
             height: 1.6,
           ),
         ),
       ],
     );
 
-    // Premium Dynamic Layout Block that accommodates images and fills container sizes
     Widget showcaseGraphicBlock = Container(
       width: double.infinity,
-      constraints: BoxConstraints(minHeight: isDesktop ? 0 : 320), 
+      constraints: BoxConstraints(minHeight: isDesktop ? 0 : 320),
       decoration: BoxDecoration(
         color: cardBgColor,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: themeColor.withOpacity(0.15)),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: activeColors.border),
         boxShadow: [
           BoxShadow(
-            color: isDark ? Colors.black.withOpacity(0.3) : Colors.black.withOpacity(0.03),
-            blurRadius: 20,
-            offset: const Offset(0, 4),
+            color: Colors.black.withOpacity(isDark ? 0.4 : 0.08),
+            blurRadius: 24,
+            offset: const Offset(0, 8),
           )
         ],
       ),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(15),
+        borderRadius: BorderRadius.circular(19),
         child: imageUrl != null && imageUrl!.isNotEmpty
             ? Image.network(
                 imageUrl!,
                 fit: BoxFit.cover,
                 errorBuilder: (context, error, stackTrace) {
                   return Container(
-                    color: fallbackBgColor,
+                    color: activeColors.accentContainer,
                     alignment: Alignment.center,
                     child: Icon(
-                      Icons.broken_image_outlined, 
-                      size: 48, 
-                      color: themeColor.withOpacity(0.4),
+                      Icons.broken_image_outlined,
+                      size: 48,
+                      color: activeColors.textSecondary,
                     ),
                   );
                 },
@@ -124,12 +115,12 @@ class SplitFeatureSection extends StatelessWidget {
                 alignment: Alignment.center,
                 children: [
                   Positioned(
-                    right: -20, 
+                    right: -20,
                     bottom: -20,
                     child: Icon(
-                      mockupIcon, 
-                      size: 200, 
-                      color: themeColor.withOpacity(0.04),
+                      mockupIcon,
+                      size: 200,
+                      color: AppColors.primaryBlue.withOpacity(0.05),
                     ),
                   ),
                   Container(
@@ -138,29 +129,29 @@ class SplitFeatureSection extends StatelessWidget {
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
                         colors: [
-                          themeColor.withOpacity(0.03), 
-                          themeColor.withOpacity(0.07),
+                          AppColors.primaryBlue.withOpacity(0.03),
+                          AppColors.primaryBlue.withOpacity(0.08),
                         ],
                       ),
                     ),
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Icon(mockupIcon, size: 56, color: themeColor),
+                        Icon(mockupIcon, size: 56, color: AppColors.primaryBlue),
                         const SizedBox(height: 14),
                         Text(
                           "Interactive Interface Blueprint",
                           style: TextStyle(
-                            color: themeColor, 
-                            fontWeight: FontWeight.bold, 
+                            color: titleTextColor,
+                            fontWeight: FontWeight.bold,
                             fontSize: 14,
                           ),
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          "Production System Module Active", 
+                          "Production System Module Active",
                           style: TextStyle(
-                            color: blueprintSubText, 
+                            color: descTextColor,
                             fontSize: 12,
                           ),
                         ),
@@ -173,8 +164,11 @@ class SplitFeatureSection extends StatelessWidget {
     );
 
     return Container(
-      padding: EdgeInsets.symmetric(vertical: 80, horizontal: isDesktop ? 60 : 24),
-      color: sectionBgColor,
+      padding: EdgeInsets.symmetric(
+        vertical: 80,
+        horizontal: isDesktop ? 60 : 24,
+      ),
+      color: Colors.transparent,
       child: Center(
         child: Container(
           constraints: const BoxConstraints(maxWidth: 1200),

@@ -1,5 +1,5 @@
 import 'package:crewmanpower/core/helpers/social_media_links.dart';
-import 'package:crewmanpower/core/widgets/build_footer_link.dart';
+import 'package:crewmanpower/core/service/app_colors/app_colors.dart';
 import 'package:crewmanpower/features/landing/footer_wave_painter.dart';
 import 'package:flutter/material.dart';
 
@@ -9,18 +9,17 @@ class WebFooterWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
     final textTheme = theme.textTheme;
+    final isDark = theme.brightness == Brightness.dark;
+    final BaseThemeColors activeColors = isDark ? AppColors.dark : AppColors.light;
+
     double width = MediaQuery.of(context).size.width;
-    
-    // Responsive breakpoints
+
     bool isDesktop = width > 950;
     bool isTablet = width <= 950 && width > 600;
 
-    // We can assume the wave draws the background color using the scheme's primary container,
-    // secondary container, or surface variant. Let's make text fallback onto colorScheme.onInverseSurface 
-    // or colorScheme.onPrimary depending on your design choice. For dark footer motifs, onPrimary or onSecondaryContainer works perfectly.
-    final textColor = colorScheme.onPrimary; 
+    // Consuming AppColors directly: White text for Navy background, Dark text for Grey background
+    final Color textColor = activeColors.footerTextColor;
 
     return IntrinsicHeight(
       child: Stack(
@@ -28,8 +27,7 @@ class WebFooterWidget extends StatelessWidget {
           Positioned.fill(
             child: CustomPaint(
               painter: FooterWavePainter(
-                // Dynamically passes the background color from your app theme
-                backgroundColor: colorScheme.primaryContainer, 
+                backgroundColor: activeColors.footerWaveColor,
               ),
             ),
           ),
@@ -40,7 +38,7 @@ class WebFooterWidget extends StatelessWidget {
             padding: EdgeInsets.only(
               left: width > 1200 ? width * 0.08 : 24,
               right: width > 1200 ? width * 0.08 : 24,
-              top: 130, // Safely pushes content below the 120px wave curve line
+              top: 130, // Safely pushes content below wave curve line
               bottom: 30,
             ),
             child: Column(
@@ -56,7 +54,7 @@ class WebFooterWidget extends StatelessWidget {
                       const SizedBox(width: 30),
                       Expanded(child: _buildHeadquartersColumn(textTheme, textColor)),
                       const SizedBox(width: 30),
-                      Expanded(child: _buildSocialColumn()),
+                      Expanded(child: _buildSocialColumn(textColor)),
                     ],
                   )
                 else if (isTablet)
@@ -76,7 +74,7 @@ class WebFooterWidget extends StatelessWidget {
                         children: [
                           Expanded(child: _buildHeadquartersColumn(textTheme, textColor)),
                           const SizedBox(width: 20),
-                          Expanded(child: _buildSocialColumn()),
+                          Expanded(child: _buildSocialColumn(textColor)),
                         ],
                       ),
                     ],
@@ -91,17 +89,17 @@ class WebFooterWidget extends StatelessWidget {
                       const SizedBox(height: 30),
                       _buildHeadquartersColumn(textTheme, textColor),
                       const SizedBox(height: 30),
-                      _buildSocialColumn(),
+                      _buildSocialColumn(textColor),
                     ],
                   ),
                 const SizedBox(height: 40),
-                Divider(color: theme.dividerColor.withOpacity(0.4), height: 20),
+                Divider(color: textColor.withOpacity(0.25), height: 20),
                 const SizedBox(height: 10),
                 Text(
                   "© 2026 Crewmanpower Solutions. All Rights Reserved. Designed for elite industry scaling.",
                   textAlign: TextAlign.center,
                   style: textTheme.bodySmall?.copyWith(
-                    color: textColor.withOpacity(0.6),
+                    color: textColor.withOpacity(0.85),
                     fontSize: 13,
                   ),
                 ),
@@ -113,8 +111,22 @@ class WebFooterWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildSocialColumn() {
-    return const SocialMediaLinksColumn();
+  Widget _buildSocialColumn(Color textColor) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          "Connect With Us",
+          style: TextStyle(
+            color: textColor,
+            fontWeight: FontWeight.bold,
+            fontSize: 15,
+          ),
+        ),
+        const SizedBox(height: 12),
+        const SocialMediaLinksColumn(),
+      ],
+    );
   }
 
   Widget _buildBrandColumn(TextTheme textTheme, Color textColor) {
@@ -122,10 +134,10 @@ class WebFooterWidget extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          "CREWMANPOWER", 
+          "CREWMANPOWER",
           style: textTheme.titleLarge?.copyWith(
-            color: textColor, 
-            fontWeight: FontWeight.bold, 
+            color: textColor,
+            fontWeight: FontWeight.bold,
             letterSpacing: 1,
           ),
         ),
@@ -133,8 +145,8 @@ class WebFooterWidget extends StatelessWidget {
         Text(
           "Leading provider of premium quality temporary and permanent workforce management systems globally.",
           style: textTheme.bodyMedium?.copyWith(
-            color: textColor.withOpacity(0.75), 
-            fontSize: 13, 
+            color: textColor.withOpacity(0.85),
+            fontSize: 13,
             height: 1.5,
           ),
         ),
@@ -147,19 +159,33 @@ class WebFooterWidget extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          "Our Core Services", 
+          "Our Core Services",
           style: textTheme.titleMedium?.copyWith(
-            color: textColor, 
+            color: textColor,
             fontWeight: FontWeight.bold,
           ),
         ),
         const SizedBox(height: 12),
-        buildFooterLink("• Healthcare Staffing"),
-        buildFooterLink("• Security Services"),
-        buildFooterLink("• Housekeeping Staffing"),
-        buildFooterLink("• Corporate Staffing"),
-        buildFooterLink("• Facility Management"),
+        _buildFooterLinkItem("• Healthcare Staffing", textColor),
+        _buildFooterLinkItem("• Security Services", textColor),
+        _buildFooterLinkItem("• Housekeeping Staffing", textColor),
+        _buildFooterLinkItem("• Corporate Staffing", textColor),
+        _buildFooterLinkItem("• Facility Management", textColor),
       ],
+    );
+  }
+
+  // FIX: Moved 'style' inside the Text widget properly
+  Widget _buildFooterLinkItem(String text, Color color) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 6.0),
+      child: Text(
+        text,
+        style: TextStyle(
+          color: color.withOpacity(0.85),
+          fontSize: 13,
+        ),
+      ),
     );
   }
 
@@ -168,9 +194,9 @@ class WebFooterWidget extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          "Head Office", 
+          "Head Office",
           style: textTheme.titleMedium?.copyWith(
-            color: textColor, 
+            color: textColor,
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -178,9 +204,9 @@ class WebFooterWidget extends StatelessWidget {
         Text(
           "1-B FIRST FLOOR,GALAXY TOWER,\nVIJAYANT KHAND,GOMTI NAGAR,\nLUCKNOW,UTTAR PRADESH - 226010",
           style: textTheme.bodyMedium?.copyWith(
-            color: textColor.withOpacity(0.75), 
-            fontSize: 13, 
-            height: 1.6, 
+            color: textColor.withOpacity(0.85),
+            fontSize: 13,
+            height: 1.6,
             fontWeight: FontWeight.w500,
           ),
         ),

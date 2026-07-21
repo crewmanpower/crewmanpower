@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../core/localization/app_localizations.dart';
+import 'package:crewmanpower/core/localization/app_localizations.dart';
+import 'package:crewmanpower/core/service/app_colors/app_colors.dart';
 import 'industry_provider.dart';
 
 class IndustryWebView extends StatefulWidget {
@@ -11,7 +12,6 @@ class IndustryWebView extends StatefulWidget {
 }
 
 class _IndustryWebViewState extends State<IndustryWebView> {
-  // Maps backend text-string identifier directly into active Flutter standard Material Icons
   IconData _mapStringToIcon(String iconName) {
     switch (iconName) {
       case 'local_hospital':
@@ -31,7 +31,6 @@ class _IndustryWebViewState extends State<IndustryWebView> {
     }
   }
 
-  // Returns precise fallbacks if AppLocalizations translation node is missing
   String _mapStringToTitle(BuildContext context, String key) {
     final localizedText = AppLocalizations.of(context)?.translate(key);
     if (localizedText != null) return localizedText;
@@ -54,7 +53,6 @@ class _IndustryWebViewState extends State<IndustryWebView> {
     }
   }
 
-  // Quick fallback descriptions to flesh out structural card balance beautifully
   String _getFallbackSub(String key) {
     switch (key) {
       case 'industry_hospital_healthcare':
@@ -78,6 +76,8 @@ class _IndustryWebViewState extends State<IndustryWebView> {
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     bool isDesktop = screenWidth > 900;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final BaseThemeColors activeColors = isDark ? AppColors.dark : AppColors.light;
 
     return ChangeNotifierProvider(
       create: (_) => IndustryProvider()
@@ -97,51 +97,50 @@ class _IndustryWebViewState extends State<IndustryWebView> {
           Widget content = SingleChildScrollView(
             child: Column(
               children: [
-                // Premium Hero Section Banner
+                // Modern Hero Header Section
                 Container(
                   width: double.infinity,
-                  color: const Color(0xFF0A192F),
                   padding: EdgeInsets.symmetric(
-                    vertical: isDesktop ? 90 : 60,
+                    vertical: isDesktop ? 80 : 50,
                     horizontal: 24,
                   ),
                   child: Column(
                     children: [
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
                         decoration: BoxDecoration(
-                          color: Colors.blue[400]!.withOpacity(0.15),
+                          color: AppColors.primaryBlue.withOpacity(0.12),
                           borderRadius: BorderRadius.circular(30),
                         ),
                         child: const Text(
                           "OUR EXPERTISE",
                           style: TextStyle(
-                            color: Color(0xFF64FFDA), // Premium Teal Accent Color
-                            fontSize: 11,
+                            color: AppColors.primaryBlue,
+                            fontSize: 12,
                             fontWeight: FontWeight.bold,
                             letterSpacing: 1.5,
                           ),
                         ),
                       ),
-                      const SizedBox(height: 20),
+                      const SizedBox(height: 16),
                       Text(
                         "INDUSTRIES WE CATER",
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                          color: Colors.white,
-                          fontSize: isDesktop ? 42 : 30,
+                          color: activeColors.textPrimary,
+                          fontSize: isDesktop ? 40 : 28,
                           fontWeight: FontWeight.bold,
                           letterSpacing: -0.5,
                         ),
                       ),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: 12),
                       ConstrainedBox(
                         constraints: const BoxConstraints(maxWidth: 650),
                         child: Text(
                           "Providing elite end-to-end workforce staffing solutions across diverse complex sectors on global operational scales.",
                           textAlign: TextAlign.center,
                           style: TextStyle(
-                            color: Colors.white.withOpacity(0.65),
+                            color: activeColors.textSecondary,
                             fontSize: 16,
                             height: 1.5,
                           ),
@@ -152,40 +151,30 @@ class _IndustryWebViewState extends State<IndustryWebView> {
                 ),
 
                 // Sector Allocation Content Grid
-                if (industries.isEmpty)
-                  const Center(
-                    child: Padding(
-                      padding: EdgeInsets.all(80.0),
-                      child: Text(
-                        "No tactical industrial configurations loaded.",
-                        style: TextStyle(fontSize: 15, color: Colors.black45),
-                      ),
-                    ),
-                  )
-                else
-                  Padding(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: screenWidth > 1300 ? screenWidth * 0.12 : 24,
-                      vertical: 80,
-                    ),
-                    child: Center(
-                      child: Wrap(
-                        spacing: 24,
-                        runSpacing: 24,
-                        alignment: WrapAlignment.center,
-                        children: industries.map((item) {
-                          final String key = item['key'] ?? '';
-                          final String iconStr = item['icon'] ?? '';
-                          
-                          return _IndustryGridCard(
-                            title: _mapStringToTitle(ctx, key),
-                            subtitle: _getFallbackSub(key),
-                            icon: _mapStringToIcon(iconStr),
-                          );
-                        }).toList(),
-                      ),
+                Padding(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: screenWidth > 1300 ? screenWidth * 0.12 : 24,
+                    vertical: 40,
+                  ),
+                  child: Center(
+                    child: Wrap(
+                      spacing: 24,
+                      runSpacing: 24,
+                      alignment: WrapAlignment.center,
+                      children: industries.map((item) {
+                        final String key = item['key'] ?? '';
+                        final String iconStr = item['icon'] ?? '';
+
+                        return _IndustryGridCard(
+                          title: _mapStringToTitle(ctx, key),
+                          subtitle: _getFallbackSub(key),
+                          icon: _mapStringToIcon(iconStr),
+                          activeColors: activeColors,
+                        );
+                      }).toList(),
                     ),
                   ),
+                ),
               ],
             ),
           );
@@ -193,7 +182,7 @@ class _IndustryWebViewState extends State<IndustryWebView> {
           if (Scaffold.maybeOf(ctx) != null) return content;
 
           return Scaffold(
-            backgroundColor: const Color(0xFFF8FAFC),
+            backgroundColor: Colors.transparent,
             body: content,
           );
         },
@@ -202,16 +191,17 @@ class _IndustryWebViewState extends State<IndustryWebView> {
   }
 }
 
-/// Fully self-contained component handling clean interactive responsive layouts safely
 class _IndustryGridCard extends StatelessWidget {
   final String title;
   final String subtitle;
   final IconData icon;
+  final BaseThemeColors activeColors;
 
   const _IndustryGridCard({
     required this.title,
     required this.subtitle,
     required this.icon,
+    required this.activeColors,
   });
 
   @override
@@ -219,51 +209,50 @@ class _IndustryGridCard extends StatelessWidget {
     return Container(
       width: 360,
       constraints: const BoxConstraints(minHeight: 220),
-      padding: const EdgeInsets.all(32),
+      padding: const EdgeInsets.all(28),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: activeColors.surface,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: const Color(0xFFE2E8F0), width: 1),
+        border: Border.all(color: activeColors.border),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF0F172A).withOpacity(0.02),
+            color: Colors.black.withOpacity(0.04),
             blurRadius: 20,
-            offset: const Offset(0, 4),
+            offset: const Offset(0, 6),
           ),
         ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Soft Bounded Glass Icon Plate
           Container(
-            padding: const EdgeInsets.all(12),
+            padding: const EdgeInsets.all(14),
             decoration: BoxDecoration(
-              color: const Color(0xFF0D47A1).withOpacity(0.06),
+              color: AppColors.primaryBlue.withOpacity(0.1),
               borderRadius: BorderRadius.circular(14),
             ),
             child: Icon(
               icon,
               size: 28,
-              color: const Color(0xFF0D47A1),
+              color: AppColors.primaryBlue,
             ),
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: 20),
           Text(
             title,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
-              color: Color(0xFF0F172A),
+              color: activeColors.textPrimary,
               letterSpacing: -0.3,
             ),
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 8),
           Text(
             subtitle,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 14,
-              color: Color(0xFF64748B), // Soft Slate-500 body color
+              color: activeColors.textSecondary,
               height: 1.5,
             ),
           ),

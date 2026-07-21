@@ -1,16 +1,22 @@
 import 'package:flutter/material.dart';
 
-// Public interface that enables unified type casting across files
 abstract class BaseThemeColors {
   Color get background;
   Color get surface;
   Color get textPrimary;
   Color get textSecondary;
+  Color get descriptionText;
   Color get accentContainer;
   Color get border;
-  // NEW: Add getters for standard gradient colors
+
+  Color get footerWaveColor;
+  Color get footerTextColor; // NEW: Dedicated footer text color getter
+
   Color get gradientStart;
   Color get gradientEnd;
+
+  List<Color> get gradientColors;
+  List<double> get gradientStops;
 }
 
 class AppColors {
@@ -23,46 +29,85 @@ class AppColors {
 
 class _Light implements BaseThemeColors {
   const _Light();
-  
+
   @override
   final Color background = const Color(0xFFF8FAFC);
   @override
   final Color surface = Colors.white;
   @override
-  final Color textPrimary = const Color(0xFF1E293B);
+  final Color textPrimary = Colors.white;
   @override
-  final Color textSecondary = const Color(0xFF64748B);
+  final Color textSecondary = const Color(0xFFE2E8F0);
+
+  @override
+  Color get descriptionText => Colors.white.withOpacity(0.90);
+
   @override
   final Color accentContainer = const Color(0xFFF1F5F9);
   @override
   final Color border = const Color(0xFFE2E8F0);
 
-  // NEW: Implementation for Light Mode (Based on WhatsApp Image 2026-07-20 at 12.04.01 PM_3.jpg)
+  // Light Mode Navy Wave -> Crisp White Text
   @override
-  Color get gradientStart => const Color(0xFF42A5F5); // Lighter blue top-left
+  Color get footerWaveColor => AppColors.navyBackground.withOpacity(0.85);
   @override
-  Color get gradientEnd => const Color(0xFF0D47A1);   // Primary blue bottom-right
+  Color get footerTextColor => Colors.white;
+
+  @override
+  Color get gradientStart => const Color(0xFF8DA9C4);
+  @override
+  Color get gradientEnd => const Color(0xFF0A192F);
+
+  @override
+  List<Color> get gradientColors => const [
+        Color(0xFF8DA9C4),
+        Color(0xFFC5D3E8),
+        Color(0xFF1B365D),
+        Color(0xFF0A192F),
+      ];
+
+  @override
+  List<double> get gradientStops => const [0.0, 0.35, 0.75, 1.0];
 }
 
 class _Dark implements BaseThemeColors {
   const _Dark();
 
   @override
-  final Color background = const Color(0xFF0F172A);
+  final Color background = const Color(0xFF0B111E);
   @override
   final Color surface = const Color(0xFF1E293B);
   @override
   final Color textPrimary = const Color(0xFFF8FAFC);
   @override
   final Color textSecondary = const Color(0xFF94A3B8);
+
+  @override
+  Color get descriptionText => const Color(0xFFCBD5E1);
+
   @override
   final Color accentContainer = const Color(0xFF334155);
   @override
   final Color border = const Color(0xFF475569);
 
-  // NEW: Implementation for Dark Mode (Based on image_2eda9e.jpg)
+  // Dark Mode Light Grey Wave -> Dark Charcoal Text
   @override
-  Color get gradientStart => const Color(0xFF0F172A); // Dark charcoal top-left
+  Color get footerWaveColor => const Color(0xFFCBD5E1);
   @override
-  Color get gradientEnd => const Color(0xFF1E293B);   // Slightly lighter navy bottom-right
+  Color get footerTextColor => const Color(0xFF0F172A);
+
+  @override
+  Color get gradientStart => const Color(0xFF05080E);
+  @override
+  Color get gradientEnd => const Color(0xFF0D1B2A);
+
+  @override
+  List<Color> get gradientColors => const [
+        Color(0xFF05080E),
+        Color(0xFF0A1120),
+        Color(0xFF0D1B2A),
+      ];
+
+  @override
+  List<double> get gradientStops => const [0.0, 0.5, 1.0];
 }

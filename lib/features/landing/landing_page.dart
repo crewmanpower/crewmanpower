@@ -1,4 +1,7 @@
+import 'dart:ui';
+
 import 'package:crewmanpower/core/helpers/web_footer.dart';
+import 'package:crewmanpower/core/service/app_colors/app_colors.dart';
 import 'package:crewmanpower/core/service/theems/theme_provider.dart';
 import 'package:crewmanpower/core/widgets/build_image_icon.dart';
 import 'package:crewmanpower/core/widgets/custom_nav_button.dart';
@@ -13,7 +16,6 @@ import 'package:crewmanpower/features/landing/horizontal_ticker_marquee.dart';
 import 'package:crewmanpower/features/landing/web_footer_widget.dart';
 import 'package:crewmanpower/features/marketing/marketing_view.dart';
 import 'package:crewmanpower/features/services/service_view.dart';
-import 'package:crewmanpower/core/service/app_colors/app_colors.dart';
 import 'package:provider/provider.dart';
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
@@ -35,6 +37,7 @@ class _WebLandingPageState extends State<WebLandingPage> {
     double screenWidth = MediaQuery.of(context).size.width;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final BaseThemeColors activeThemeColors = isDark ? AppColors.dark : AppColors.light;
+
     Widget wrapWithFooter(Widget screenView) {
       double dynamicFooterHeight = screenWidth > 900 ? 480 : 950;
       double screenHeight = MediaQuery.of(context).size.height;
@@ -66,133 +69,179 @@ class _WebLandingPageState extends State<WebLandingPage> {
     ];
 
     return Scaffold(
-      backgroundColor: activeThemeColors.background,
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(80),
-        child: Container(
-          margin: const EdgeInsets.fromLTRB(16, 12, 16, 0), 
-          decoration: BoxDecoration(
-            color: AppColors.navyBackground, 
-            borderRadius: BorderRadius.circular(16),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(isDark ? 0.3 : 0.06),
-                blurRadius: 16,
-                spreadRadius: 0,
-                offset: const Offset(0, 4),
-              ),
-            ],
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: activeThemeColors.gradientColors,
+            stops: activeThemeColors.gradientStops,
           ),
-          child: Padding(
-            padding: const EdgeInsets.only(top: 8.0),
-            child: AppBar(
-              backgroundColor: Colors.transparent,
-              elevation: 0,
-              centerTitle: false,
-              automaticallyImplyLeading: true,
-              iconTheme: const IconThemeData(
-                color: Colors.white,
-              ),
-              title: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  buildLogo(size: 38),
-                  const SizedBox(width: 12),
-                  Flexible(
-                    child: Text(
-                      "CREWMANPOWER",
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 1,
-                      style: TextStyle(
-                        color: Colors.blue[300], 
-                        fontWeight: FontWeight.bold,
-                        fontSize: 20,
-                        letterSpacing: 0.5,
-                      ),
-                    ),
+        ),
+        child: Column(
+          children: [
+            // Custom Navigation Header
+            Container(
+              margin: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+              decoration: BoxDecoration(
+                color: AppColors.navyBackground.withOpacity(0.85),
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(isDark ? 0.4 : 0.12),
+                    blurRadius: 16,
+                    offset: const Offset(0, 4),
                   ),
                 ],
               ),
-              actions: [
-                if (screenWidth > 850) ...[
-                  CustomNavButton(
-                    text: AppLocalizations.of(context)!.translate('nav_home'),
-                    isActive: _activeSectionIndex == 0,
-                    onTap: () => setState(() => _activeSectionIndex = 0),
-                  ),
-                  CustomNavButton(
-                    text: AppLocalizations.of(context)!.translate('nav_about'),
-                    isActive: _activeSectionIndex == 1,
-                    onTap: () => setState(() => _activeSectionIndex = 1),
-                  ),
-                  CustomNavButton(
-                    text: AppLocalizations.of(context)!.translate('nav_services'),
-                    isActive: _activeSectionIndex == 2,
-                    onTap: () => setState(() => _activeSectionIndex = 2),
-                  ),
-                  CustomNavButton(
-                    text: AppLocalizations.of(context)!.translate('nav_industries'),
-                    isActive: _activeSectionIndex == 3,
-                    onTap: () => setState(() => _activeSectionIndex = 3),
-                  ),
-                  CustomNavButton(
-                    text: AppLocalizations.of(context)!.translate('nav_careers'),
-                    isActive: _activeSectionIndex == 4,
-                    onTap: () => setState(() => _activeSectionIndex = 4),
-                  ),
-                  CustomNavButton(
-                    text: AppLocalizations.of(context)!.translate('nav_contact'),
-                    isActive: _activeSectionIndex == 5,
-                    onTap: () => setState(() => _activeSectionIndex = 5),
-                  ),
-                ],
-                const SizedBox(width: 10),
-                Container(
-                  padding: const EdgeInsets.all(2),
-                  decoration: BoxDecoration(
-                    color: isDark ? const Color(0xFF1E293B) : const Color(0xFFF1F5F9),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: IconButton(
-                    padding: EdgeInsets.zero,
-                    constraints: const BoxConstraints(),
-                    icon: Icon(
-                      isDark ? Icons.light_mode_rounded : Icons.dark_mode_rounded,
-                      color: isDark ? Colors.white70 : Colors.black87,
-                      size: 32,
-                    ),
-                    onPressed: () {
-                      context.read<ThemeProvider>().toggleTheme();
-                    },
-                  ),
-                ),
-                const SizedBox(width: 10),
-                Padding(
-                  padding: const EdgeInsets.only(right: 16.0),
-                  child: PopupMenuButton<String>(
-                    icon: Container(
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        color: isDark ? const Color(0xFF1E293B) : const Color(0xFFF1F5F9),
-                        borderRadius: BorderRadius.circular(10),
+              child: SafeArea(
+                bottom: false,
+                child: Container(
+                  height: 70,
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Row(
+                    children: [
+                      buildLogo(size: 38),
+                      const SizedBox(width: 12),
+                      Flexible(
+                        child: Text(
+                          "CREWMANPOWER",
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 1,
+                          style: TextStyle(
+                            color: Colors.blue[300],
+                            fontWeight: FontWeight.bold,
+                            fontSize: 20,
+                            letterSpacing: 0.5,
+                          ),
+                        ),
                       ),
-                      child: Icon(Icons.language, color: isDark ? Colors.white70 : Colors.black87, size: 20),
-                    ),
-                    onSelected: (value) {
-                      if (value == 'en') widget.onLanguageChange(const Locale('en'));
-                      if (value == 'hi') widget.onLanguageChange(const Locale('hi'));
-                      if (value == 'ur') widget.onLanguageChange(const Locale('ur'));
-                    },
-                    itemBuilder: (BuildContext context) => [
-                      const PopupMenuItem(value: 'en', child: Text("English")),
-                      const PopupMenuItem(value: 'hi', child: Text("हिंदी (Hindi)")),
-                      const PopupMenuItem(value: 'ur', child: Text("اردو (Urdu)")),
+                      const Spacer(),
+                      if (screenWidth > 850) ...[
+                        CustomNavButton(
+                          text: AppLocalizations.of(context)!.translate('nav_home'),
+                          isActive: _activeSectionIndex == 0,
+                          onTap: () => setState(() => _activeSectionIndex = 0),
+                        ),
+                        CustomNavButton(
+                          text: AppLocalizations.of(context)!.translate('nav_about'),
+                          isActive: _activeSectionIndex == 1,
+                          onTap: () => setState(() => _activeSectionIndex = 1),
+                        ),
+                        CustomNavButton(
+                          text: AppLocalizations.of(context)!.translate('nav_services'),
+                          isActive: _activeSectionIndex == 2,
+                          onTap: () => setState(() => _activeSectionIndex = 2),
+                        ),
+                        CustomNavButton(
+                          text: AppLocalizations.of(context)!.translate('nav_industries'),
+                          isActive: _activeSectionIndex == 3,
+                          onTap: () => setState(() => _activeSectionIndex = 3),
+                        ),
+                        CustomNavButton(
+                          text: AppLocalizations.of(context)!.translate('nav_careers'),
+                          isActive: _activeSectionIndex == 4,
+                          onTap: () => setState(() => _activeSectionIndex = 4),
+                        ),
+                        CustomNavButton(
+                          text: AppLocalizations.of(context)!.translate('nav_contact'),
+                          isActive: _activeSectionIndex == 5,
+                          onTap: () => setState(() => _activeSectionIndex = 5),
+                        ),
+                      ],
+                      const SizedBox(width: 10),
+                      // Theme Switcher Button
+                      Container(
+                        padding: const EdgeInsets.all(2),
+                        decoration: BoxDecoration(
+                          color: isDark ? const Color(0xFF1E293B) : const Color(0xFFF1F5F9),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: IconButton(
+                          padding: EdgeInsets.zero,
+                          constraints: const BoxConstraints(),
+                          icon: Icon(
+                            isDark ? Icons.light_mode_rounded : Icons.dark_mode_rounded,
+                            color: isDark ? Colors.white70 : Colors.black87,
+                            size: 30,
+                          ),
+                          onPressed: () {
+                            context.read<ThemeProvider>().toggleTheme();
+                          },
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      // Language Selector Dropdown
+                      PopupMenuButton<String>(
+                        icon: Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color: isDark ? const Color(0xFF1E293B) : const Color(0xFFF1F5F9),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Icon(
+                            Icons.language,
+                            color: isDark ? Colors.white70 : Colors.black87,
+                            size: 20,
+                          ),
+                        ),
+                        onSelected: (value) {
+                          if (value == 'en') widget.onLanguageChange(const Locale('en'));
+                          if (value == 'hi') widget.onLanguageChange(const Locale('hi'));
+                          if (value == 'ur') widget.onLanguageChange(const Locale('ur'));
+                        },
+                        itemBuilder: (BuildContext context) => [
+                          const PopupMenuItem(value: 'en', child: Text("English")),
+                          const PopupMenuItem(value: 'hi', child: Text("हिंदी (Hindi)")),
+                          const PopupMenuItem(value: 'ur', child: Text("اردو (Urdu)")),
+                        ],
+                      ),
                     ],
                   ),
                 ),
-              ],
+              ),
             ),
-          ),
+            // Page Body Content
+            Expanded(
+              child: Stack(
+                children: [
+                  webSections[_activeSectionIndex],
+                  Positioned(
+                    bottom: 30,
+                    right: 30,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        if (_isChatOpen) ...[
+                          ImageIcons().buildImageIcon("assets/images/email.PNG", email),
+                          const SizedBox(height: 12),
+                          ImageIcons().buildImageIcon("assets/images/whatsapp.PNG", whatsapp),
+                          const SizedBox(height: 12),
+                          ImageIcons().buildImageIcon("assets/images/message.PNG", message),
+                          const SizedBox(height: 12),
+                          ImageIcons().buildImageIcon("assets/images/call.PNG", call),
+                          const SizedBox(height: 15),
+                        ],
+                        FloatingActionButton(
+                          backgroundColor: AppColors.primaryBlue,
+                          elevation: 8,
+                          onPressed: () => setState(() => _isChatOpen = !_isChatOpen),
+                          child: AnimatedSwitcher(
+                            duration: const Duration(milliseconds: 300),
+                            transitionBuilder: (child, animation) =>
+                                ScaleTransition(scale: animation, child: child),
+                            child: _isChatOpen
+                                ? const Icon(Icons.close, color: Colors.white, key: ValueKey("close"))
+                                : const Icon(Icons.chat_bubble_outline, color: Colors.white, key: ValueKey("chat")),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
         ),
       ),
       drawer: screenWidth <= 850
@@ -201,43 +250,6 @@ class _WebLandingPageState extends State<WebLandingPage> {
               onSectionSelected: (index) => setState(() => _activeSectionIndex = index),
             )
           : null,
-      body: Stack(
-        
-        children: [
-          webSections[_activeSectionIndex],
-          Positioned(
-            bottom: 30,
-            right: 30,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                if (_isChatOpen) ...[
-                  ImageIcons().buildImageIcon("assets/images/email.PNG", email),
-                  const SizedBox(height: 12),
-                  ImageIcons().buildImageIcon("assets/images/whatsapp.PNG", whatsapp),
-                  const SizedBox(height: 12),
-                  ImageIcons().buildImageIcon("assets/images/message.PNG", message),
-                  const SizedBox(height: 12),
-                  ImageIcons().buildImageIcon("assets/images/call.PNG", call),
-                  const SizedBox(height: 15),
-                ],
-                FloatingActionButton(
-                  backgroundColor: AppColors.primaryBlue,
-                  elevation: 8,
-                  onPressed: () => setState(() => _isChatOpen = !_isChatOpen),
-                  child: AnimatedSwitcher(
-                    duration: const Duration(milliseconds: 300),
-                    transitionBuilder: (child, animation) => ScaleTransition(scale: animation, child: child),
-                    child: _isChatOpen
-                        ? const Icon(Icons.close, color: Colors.white, key: ValueKey("close"))
-                        : const Icon(Icons.chat_bubble_outline, color: Colors.white, key: ValueKey("chat")),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
     );
   }
 
@@ -254,7 +266,7 @@ class _WebLandingPageState extends State<WebLandingPage> {
           mockupIcon: Icons.hub_outlined,
           imageUrl: "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?q=80&w=600",
         ),
-        _buildStatisticsSection(context,isDesktop),
+        _buildStatisticsSection(context, isDark),
         SplitFeatureSection(
           isDesktop: isDesktop,
           imageRight: false,
@@ -273,59 +285,69 @@ class _WebLandingPageState extends State<WebLandingPage> {
           mockupIcon: Icons.connect_without_contact_sharp,
           imageUrl: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=600",
         ),
-        
         _buildTestimonialsSection(isDesktop, isDark),
       ],
     );
   }
 
   Widget _buildStatisticsSection(BuildContext context, bool isDark) {
-    final BaseThemeColors activeThemeColors = isDark ? AppColors.dark : AppColors.light;
-
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 70, horizontal: 24),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          // Consuming the specific theme gradient colors
-          colors: [
-            activeThemeColors.gradientStart,
-            activeThemeColors.gradientEnd,
-          ],
-        ),
-      ),
+      padding: const EdgeInsets.symmetric(vertical: 50, horizontal: 24),
       width: double.infinity,
-      child: Wrap(
-        alignment: WrapAlignment.center,
-        spacing: 24,
-        runSpacing: 24,
-        children: [
-          HorizontalTickerMarquee(
-            onItemTap: (index) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(
-                    'You clicked verified badge code: $index',
-                    style: const TextStyle(color: Colors.white), // Forced white for visibility on blue background
-                  ),
-                  backgroundColor: AppColors.navyBackground, // Navy SnackBar matches standard look better
-                  duration: const Duration(seconds: 2),
-                ),
-              );
-            },
+      child: Center(
+        child: Container(
+          constraints: const BoxConstraints(maxWidth: 1600),
+          decoration: BoxDecoration(
+            // Subtly highlighted container box behind the marquee
+            color: isDark 
+                ? Colors.white.withOpacity(0.04) 
+                : Colors.white.withOpacity(0.15),
+            borderRadius: BorderRadius.circular(24),
+            border: Border.all(
+              color: Colors.white.withOpacity(isDark ? 0.1 : 0.3),
+              width: 1,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.06),
+                blurRadius: 30,
+                offset: const Offset(0, 10),
+              )
+            ],
           ),
-        ],
+          padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(20),
+            child: BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
+              child: HorizontalTickerMarquee(
+                onItemTap: (index) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(
+                        'You clicked verified badge code: $index',
+                        style: const TextStyle(color: Colors.white),
+                      ),
+                      backgroundColor: AppColors.navyBackground,
+                      duration: const Duration(seconds: 2),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ),
+        ),
       ),
     );
   }
 
   Widget _buildTestimonialsSection(bool isDesktop, bool isDark) {
     final BaseThemeColors activeThemeColors = isDark ? AppColors.dark : AppColors.light;
-    
+
     return Container(
       padding: EdgeInsets.symmetric(vertical: 100, horizontal: isDesktop ? 60 : 24),
-      color: activeThemeColors.background,
+      // CHANGED: Set color to transparent instead of activeThemeColors.background
+      color: Colors.transparent, 
       child: Column(
         children: [
           Container(

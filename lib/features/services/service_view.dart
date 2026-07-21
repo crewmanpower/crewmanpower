@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../core/localization/app_localizations.dart';
+import 'package:crewmanpower/core/localization/app_localizations.dart';
+import 'package:crewmanpower/core/service/app_colors/app_colors.dart';
 import 'service_provider.dart';
 
 class ServiceView extends StatefulWidget {
@@ -11,7 +12,6 @@ class ServiceView extends StatefulWidget {
 }
 
 class _ServiceViewState extends State<ServiceView> {
-  // Maps service key identifiers directly to specific context icons dynamically
   IconData _mapServiceToIcon(String key) {
     final lowerKey = key.toLowerCase();
     if (lowerKey.contains('manpower') || lowerKey.contains('staff')) {
@@ -25,10 +25,9 @@ class _ServiceViewState extends State<ServiceView> {
     } else if (lowerKey.contains('logistics') || lowerKey.contains('warehouse')) {
       return Icons.precision_manufacturing_rounded;
     }
-    return Icons.assignment_ind_rounded; // Default elegant fallback icon vector
+    return Icons.assignment_ind_rounded;
   }
 
-  // Returns precise human-readable fallback titles for the client demo view
   String _mapServiceToTitle(BuildContext context, String key) {
     final localized = AppLocalizations.of(context)?.translate(key);
     if (localized != null) return localized;
@@ -47,7 +46,6 @@ class _ServiceViewState extends State<ServiceView> {
     }
   }
 
-  // Returns descriptive context values if fallback translation trees aren't initialized
   String _mapServiceToDesc(BuildContext context, String key) {
     final localized = AppLocalizations.of(context)?.translate('${key}_desc');
     if (localized != null) return localized;
@@ -71,6 +69,8 @@ class _ServiceViewState extends State<ServiceView> {
     double screenWidth = MediaQuery.of(context).size.width;
     bool isDesktop = screenWidth > 900;
     int crossAxisCount = screenWidth > 1100 ? 3 : (screenWidth > 700 ? 2 : 1);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final BaseThemeColors activeColors = isDark ? AppColors.dark : AppColors.light;
 
     return ChangeNotifierProvider(
       create: (_) => ServiceProvider()
@@ -85,126 +85,100 @@ class _ServiceViewState extends State<ServiceView> {
           final provider = ctx.watch<ServiceProvider>();
           final keys = provider.services;
 
-          Widget content;
-          if (keys.isEmpty) {
-            content = const Center(
-              child: Padding(
-                padding: EdgeInsets.all(80.0),
-                child: Text(
-                  'No operational vectors discovered currently.',
-                  style: TextStyle(
-                    fontSize: 15,
-                    color: Color(0xFF64748B),
-                    fontWeight: FontWeight.w500,
+          Widget content = SingleChildScrollView(
+            child: Column(
+              children: [
+                Container(
+                  width: double.infinity,
+                  padding: EdgeInsets.symmetric(
+                    vertical: isDesktop ? 80 : 50,
+                    horizontal: 24,
                   ),
-                ),
-              ),
-            );
-          } else {
-            content = SingleChildScrollView(
-              child: Column(
-                children: [
-                  // Premium Modern Gradient Dashboard Banner
-                  Container(
-                    width: double.infinity,
-                    decoration: const BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [Color(0xFF0F172A), Color(0xFF1E293B)],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                      ),
-                    ),
-                    padding: EdgeInsets.symmetric(
-                      vertical: isDesktop ? 80 : 50,
-                      horizontal: 24,
-                    ),
-                    child: Column(
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
-                          decoration: BoxDecoration(
-                            color: const Color(0xFF0D47A1).withOpacity(0.3),
-                            borderRadius: BorderRadius.circular(30),
-                            border: Border.all(color: Colors.blue.withOpacity(0.4)),
-                          ),
-                          child: const Text(
-                            "CAPABILITIES",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 11,
-                              fontWeight: FontWeight.bold,
-                              letterSpacing: 1.5,
-                            ),
+                  child: Column(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                        decoration: BoxDecoration(
+                          color: AppColors.primaryBlue.withOpacity(0.12),
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                        child: const Text(
+                          "CAPABILITIES",
+                          style: TextStyle(
+                            color: AppColors.primaryBlue,
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: 1.5,
                           ),
                         ),
-                        const SizedBox(height: 20),
-                        Text(
-                          AppLocalizations.of(context)?.translate('services_title') ?? 'Services Spectrum',
+                      ),
+                      const SizedBox(height: 16),
+                      Text(
+                        AppLocalizations.of(context)?.translate('services_title') ?? 'Services Spectrum',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: activeColors.textPrimary,
+                          fontSize: isDesktop ? 40 : 28,
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: -0.5,
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      ConstrainedBox(
+                        constraints: const BoxConstraints(maxWidth: 600),
+                        child: Text(
+                          "Deploying custom-engineered workforce solutions built on rigorous structural verification mechanisms and global compliance metrics.",
                           textAlign: TextAlign.center,
                           style: TextStyle(
-                            color: Colors.white,
-                            fontSize: isDesktop ? 40 : 28,
-                            fontWeight: FontWeight.bold,
-                            letterSpacing: -0.5,
+                            color: activeColors.textSecondary,
+                            fontSize: 15,
+                            height: 1.5,
                           ),
                         ),
-                        const SizedBox(height: 12),
-                        ConstrainedBox(
-                          constraints: const BoxConstraints(maxWidth: 600),
-                          child: Text(
-                            "Deploying custom-engineered workforce solutions built on rigorous structural verification mechanisms and global compliance metrics.",
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              color: Colors.white.withOpacity(0.65),
-                              fontSize: 15,
-                              height: 1.5,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
+                ),
 
-                  // Interactive Grid Block Layout Frame
-                  Padding(
-                    padding: EdgeInsets.symmetric(
-                      vertical: 80,
-                      horizontal: screenWidth > 1300 ? screenWidth * 0.12 : 24,
-                    ),
-                    child: Center(
-                      child: Container(
-                        constraints: const BoxConstraints(maxWidth: 1200),
-                        child: GridView.builder(
-                          shrinkWrap: true,
-                          physics: const NeverScrollableScrollPhysics(),
-                          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: crossAxisCount,
-                            crossAxisSpacing: 32,
-                            mainAxisSpacing: 32,
-                            childAspectRatio: isDesktop ? 1.25 : 1.45,
-                          ),
-                          itemCount: keys.length,
-                          itemBuilder: (context, index) {
-                            final currentKey = keys[index];
-                            return ServiceCard(
-                              title: _mapServiceToTitle(context, currentKey),
-                              description: _mapServiceToDesc(context, currentKey),
-                              icon: _mapServiceToIcon(currentKey),
-                            );
-                          },
+                Padding(
+                  padding: EdgeInsets.symmetric(
+                    vertical: 40,
+                    horizontal: screenWidth > 1300 ? screenWidth * 0.12 : 24,
+                  ),
+                  child: Center(
+                    child: Container(
+                      constraints: const BoxConstraints(maxWidth: 1200),
+                      child: GridView.builder(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: crossAxisCount,
+                          crossAxisSpacing: 24,
+                          mainAxisSpacing: 24,
+                          childAspectRatio: isDesktop ? 1.25 : 1.4,
                         ),
+                        itemCount: keys.length,
+                        itemBuilder: (context, index) {
+                          final currentKey = keys[index];
+                          return ServiceCard(
+                            title: _mapServiceToTitle(context, currentKey),
+                            description: _mapServiceToDesc(context, currentKey),
+                            icon: _mapServiceToIcon(currentKey),
+                            activeColors: activeColors,
+                          );
+                        },
                       ),
                     ),
                   ),
-                ],
-              ),
-            );
-          }
+                ),
+              ],
+            ),
+          );
 
           if (Scaffold.maybeOf(ctx) != null) return content;
 
           return Scaffold(
-            backgroundColor: const Color(0xFFF8FAFC),
+            backgroundColor: Colors.transparent,
             body: content,
           );
         },
@@ -213,34 +187,33 @@ class _ServiceViewState extends State<ServiceView> {
   }
 }
 
-/// Redesigned Responsive Interactive Card Component 
 class ServiceCard extends StatelessWidget {
   final String title;
   final String description;
   final IconData icon;
+  final BaseThemeColors activeColors;
 
   const ServiceCard({
     super.key,
     required this.title,
     required this.description,
     required this.icon,
+    required this.activeColors,
   });
 
   @override
   Widget build(BuildContext context) {
-    const Color brandColor = Color(0xFF0D47A1);
-
     return Container(
-      padding: const EdgeInsets.all(32),
+      padding: const EdgeInsets.all(28),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: const Color(0xFFE2E8F0), width: 1),
+        color: activeColors.surface,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: activeColors.border),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF0F172A).withOpacity(0.02),
+            color: Colors.black.withOpacity(0.04),
             blurRadius: 20,
-            offset: const Offset(0, 4),
+            offset: const Offset(0, 6),
           ),
         ],
       ),
@@ -253,40 +226,39 @@ class ServiceCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
-                // Soft Accent Bounded Icon Hex Base Plate
                 Container(
                   padding: const EdgeInsets.all(14),
                   decoration: BoxDecoration(
-                    color: brandColor.withOpacity(0.06),
-                    borderRadius: BorderRadius.circular(16),
+                    color: AppColors.primaryBlue.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(14),
                   ),
                   child: Icon(
                     icon,
-                    color: brandColor,
+                    color: AppColors.primaryBlue,
                     size: 26,
                   ),
                 ),
-                const SizedBox(height: 24),
+                const SizedBox(height: 20),
                 Text(
                   title,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
-                    color: Color(0xFF0F172A), // Premium High-contrast Dark Slate
+                    color: activeColors.textPrimary,
                     letterSpacing: -0.3,
                   ),
                 ),
-                const SizedBox(height: 10),
+                const SizedBox(height: 8),
                 Flexible(
                   child: Text(
                     description,
                     maxLines: 3,
                     overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 13.5,
-                      color: Color(0xFF64748B), // Clear Slate-500 Body Text Format
+                      color: activeColors.textSecondary,
                       height: 1.5,
                     ),
                   ),
@@ -295,25 +267,24 @@ class ServiceCard extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 16),
-          // Action Vector Element Link
           MouseRegion(
             cursor: SystemMouseCursors.click,
             child: Row(
               mainAxisSize: MainAxisSize.min,
-              children: [
-                const Text(
+              children: const [
+                Text(
                   'Learn More',
                   style: TextStyle(
-                    fontWeight: FontWeight.bold, 
+                    fontWeight: FontWeight.bold,
                     fontSize: 13,
-                    color: brandColor,
+                    color: AppColors.primaryBlue,
                   ),
                 ),
-                const SizedBox(width: 6),
+                SizedBox(width: 6),
                 Icon(
-                  Icons.arrow_right_alt_rounded, 
-                  size: 18, 
-                  color: brandColor.withOpacity(0.8),
+                  Icons.arrow_right_alt_rounded,
+                  size: 18,
+                  color: AppColors.primaryBlue,
                 ),
               ],
             ),

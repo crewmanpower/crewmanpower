@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:crewmanpower/core/localization/app_localizations.dart';
+import 'package:crewmanpower/core/service/app_colors/app_colors.dart';
 
 class CustomDrawerCard extends StatelessWidget {
   final int activeIndex;
@@ -13,13 +14,16 @@ class CustomDrawerCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colors = isDark ? AppColors.dark : AppColors.light;
+
     return Drawer(
       backgroundColor: Colors.transparent,
       elevation: 0,
       child: Container(
         margin: const EdgeInsets.fromLTRB(16, 16, 8, 16),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: colors.surface,
           borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
@@ -57,13 +61,11 @@ class CustomDrawerCard extends StatelessWidget {
                         child: Padding(
                           padding: const EdgeInsets.all(8),
                           child: Image.asset(
-                            "assets/images/logo.png",
+                            "assets/images/logo.PNG",
                             fit: BoxFit.cover,
                           ),
                         ),
                       ),
-                     
-                      
                     ],
                   ),
                 ),
@@ -129,28 +131,31 @@ class CustomDrawerCard extends StatelessWidget {
     int index,
   ) {
     final bool isSelected = activeIndex == index;
-    final Color primaryColor = Colors.blue.shade900;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final Color primaryColor = AppColors.primaryBlue;
+    final inactiveColor = isDark
+        ? AppColors.dark.textSecondary
+        : AppColors.light.textSecondary;
+    final textColor = isDark
+        ? AppColors.dark.textPrimary
+        : AppColors.light.textPrimary;
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
       child: ListTile(
-        contentPadding:
-            const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(14),
-        ),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
         leading: Icon(
           icon,
-          color: isSelected ? primaryColor : Colors.grey.shade700,
+          color: isSelected ? primaryColor : inactiveColor,
           size: 24,
         ),
         title: Text(
           AppLocalizations.of(context)!.translate(translationKey),
           style: TextStyle(
             fontSize: 15,
-            fontWeight:
-                isSelected ? FontWeight.bold : FontWeight.w500,
-            color: isSelected ? primaryColor : Colors.black87,
+            fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+            color: isSelected ? primaryColor : textColor,
           ),
         ),
         selected: isSelected,

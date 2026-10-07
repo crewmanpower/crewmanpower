@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+
 class ImageIcons {
-  
   Widget buildImageIcon(String asset, VoidCallback onTap) {
     return InkWell(
       onTap: onTap,
@@ -12,8 +12,23 @@ class ImageIcons {
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(50),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 8,
+              offset: const Offset(0, 4),
+            ),
+          ],
         ),
-        child: Image.asset(asset),
+        child: Image.asset(
+          asset,
+          fit: BoxFit.contain,
+          errorBuilder: (context, error, stackTrace) => const Icon(
+            Icons.broken_image_rounded,
+            color: Colors.grey,
+            size: 24,
+          ),
+        ),
       ),
     );
   }
@@ -25,8 +40,12 @@ class ImageIcons {
       child: Image.asset(
         asset,
         fit: BoxFit.contain,
+        errorBuilder: (context, error, stackTrace) => const Icon(
+          Icons.broken_image_rounded,
+          color: Colors.grey,
+          size: 24,
+        ),
       ),
     );
   }
-
 }

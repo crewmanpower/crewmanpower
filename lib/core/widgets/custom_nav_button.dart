@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:crewmanpower/core/service/app_colors/app_colors.dart';
 
 class CustomNavButton extends StatelessWidget {
   final String text;
@@ -14,16 +15,19 @@ class CustomNavButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Using an eye-catching accent color for the active states on a dark surface
-    final activeAccentColor = Colors.orange[400] ?? Colors.orange;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final BaseThemeColors activeThemeColors = isDark ? AppColors.dark : AppColors.light;
+
+    // Active tab ke liye vibrant color aur inactive ke liye theme ke mutabiq text color
+    final activeColor = Colors.orange[400] ?? Colors.orange;
+    final inactiveColor = isDark ? activeThemeColors.textSecondary : activeThemeColors.textPrimary;
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 4.0),
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(8),
-        // Changed hover indicator to look pristine on dark backgrounds
-        hoverColor: Colors.white.withOpacity(0.08),
+        hoverColor: (isDark ? Colors.white : Colors.black).withOpacity(0.08),
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 4.0),
           child: Column(
@@ -33,8 +37,7 @@ class CustomNavButton extends StatelessWidget {
               Text(
                 text,
                 style: TextStyle(
-                  // Active tabs show the vibrant accent color, inactive tabs show clean crisp white
-                  color: isActive ? activeAccentColor : Colors.white.withOpacity(0.9),
+                  color: isActive ? activeColor : inactiveColor,
                   fontWeight: isActive ? FontWeight.bold : FontWeight.w500,
                   fontSize: 15,
                   letterSpacing: 0.3,
@@ -46,7 +49,7 @@ class CustomNavButton extends StatelessWidget {
                 height: 3,
                 width: isActive ? 24 : 0,
                 decoration: BoxDecoration(
-                  color: activeAccentColor,
+                  color: activeColor,
                   borderRadius: BorderRadius.circular(1.5),
                 ),
               ),

@@ -25,5 +25,10 @@ Future<void> whatsapp() async {
 }
 
 Widget buildLogo({double size = 40}) {
-  return Image.asset("assets/images/logo.png",width: size,height: size,fit: BoxFit.contain);
+  return Image.asset(
+    "assets/images/logo.PNG",
+    width: size,
+    height: size,
+    fit: BoxFit.contain,
+  );
 }
